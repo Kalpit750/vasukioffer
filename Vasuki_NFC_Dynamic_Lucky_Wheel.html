@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080f19">
+  <meta name="description" content="Spin the Vasuki NFC Lucky Wheel to discover a surprise offer.">
+  <title>Vasuki NFC • Lucky Wheel</title>
+  <style>
+    :root{color-scheme:dark;--bg:#060c14;--bg2:#0c1622;--surface:#101d2b;--line:rgba(183,221,231,.15);--teal:#4ee4cb;--teal2:#8afbeb;--gold:#f4ca83;--white:#f5f9fb;--muted:#9daebf;--shadow:0 24px 85px rgba(0,0,0,.46)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100svh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:radial-gradient(ellipse 760px 500px at 50% -180px,rgba(20,119,127,.27),transparent 88%),radial-gradient(ellipse 530px 530px at -12% 65%,rgba(18,75,105,.16),transparent 85%),linear-gradient(140deg,var(--bg),#0b1520 60%,#060b13);color:var(--white);overflow-x:hidden}
+    body:before{content:"";position:fixed;inset:0;opacity:.24;pointer-events:none;background-image:radial-gradient(rgba(152,203,209,.17) .7px,transparent .7px);background-size:24px 24px;mask-image:linear-gradient(180deg,black,transparent 90%)}
+    button,input,a{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--teal);outline-offset:4px}button:disabled{cursor:not-allowed;opacity:.7}#customerView[hidden],#setupView[hidden],#resultCard[hidden]{display:none!important}
+    .site-wrap{max-width:1160px;margin:0 auto;padding:22px clamp(16px,3.6vw,42px) 35px;position:relative}
+    .topbar{min-height:58px;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:4px 0 20px;border-bottom:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;min-width:0}.brand-mark{position:relative;display:grid;place-items:center;width:43px;height:43px;flex-shrink:0;border-radius:13px;background:linear-gradient(135deg,#84fff0,#18a998);color:#07171b;box-shadow:0 0 0 4px #49d9c916,0 5px 28px #35bfa641;font-weight:1000;font-size:25px;font-style:italic}.brand-mark:after{content:"";position:absolute;width:8px;height:8px;border-right:2px solid #123a39;border-top:2px solid #123a39;border-radius:0 100% 0 0;right:6px;top:6px;transform:rotate(10deg)}.brand-name{font-weight:950;font-size:18px;letter-spacing:1px}.brand-name span{color:var(--teal)}.brand-sub{font-weight:700;font-size:9px;letter-spacing:2.1px;color:#90a6b6;margin-top:3px}
+    .top-pill{white-space:nowrap;display:flex;align-items:center;gap:8px;border:1px solid #d1ebe424;border-radius:30px;background:#ffffff07;padding:10px 13px;font-size:10px;letter-spacing:.9px;font-weight:850;color:#cee9e8}.pulse-dot{width:7px;height:7px;flex:none;background:var(--teal);border-radius:50%;box-shadow:0 0 0 5px #42d9bc15,0 0 14px #42d9bc84}
+    .hero{text-align:center;padding-top:clamp(27px,5vw,54px)}.overline{display:inline-flex;align-items:center;gap:8px;color:var(--gold);font-weight:900;letter-spacing:3px;text-transform:uppercase;font-size:10px}.line-stars{font-size:14px;letter-spacing:4px}.hero h1{font-size:clamp(37px,6.6vw,67px);font-weight:950;letter-spacing:-2.7px;line-height:1.05;margin:15px auto 12px;max-width:800px}.hero h1 span{color:var(--teal);background:linear-gradient(100deg,var(--teal),#bafff2);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hero p{color:var(--muted);font-size:clamp(12px,2.5vw,15px);line-height:1.75;max-width:570px;margin:0 auto}
+    .game-shell{display:grid;grid-template-columns:minmax(0,1fr) 305px;gap:22px;max-width:980px;margin:32px auto 0;align-items:start}.game-card,.info-card{border:1px solid var(--line);background:linear-gradient(150deg,rgba(20,38,53,.97),rgba(8,18,29,.96) 64%);border-radius:26px;box-shadow:var(--shadow);position:relative;overflow:hidden}.game-card{padding:22px 18px 25px;text-align:center}.game-card:before{content:"";pointer-events:none;position:absolute;inset:-180px -100px auto;height:400px;background:radial-gradient(circle,rgba(32,183,162,.14),transparent 67%)}.game-head{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:470px;margin:0 auto}.game-head span{font-size:10px;color:#b7c6d2;font-weight:800;letter-spacing:1.4px}.game-head strong{font-size:11px;letter-spacing:.5px;color:var(--teal)}
+    .wheel-container{position:relative;width:min(76vw,410px);max-width:100%;aspect-ratio:1;margin:28px auto 12px;filter:drop-shadow(0 25px 29px #0009)}
+    .wheel-halo{position:absolute;inset:-12px;border-radius:50%;background:conic-gradient(from 15deg,#379a91,#f5d79c,#48d6cb,#a5e8de,#379a91);box-shadow:0 0 0 5px #40d9c41a,0 0 43px #41d8c32a}
+    .wheel-ring{position:absolute;inset:-4px;border-radius:50%;padding:11px;background:#0a1822;border:2px solid #bbfff08a;box-shadow:inset 0 0 0 2px #22575a}
+    .rotor{position:relative;width:100%;height:100%;border-radius:50%;overflow:hidden;border:2px solid #fff8dd;transition:transform 6200ms cubic-bezier(.12,.76,.09,1);will-change:transform;background:conic-gradient(#42dcc6 0 45deg,#f4ca83 45deg 90deg,#91b8ff 90deg 135deg,#ef9ec6 135deg 180deg,#b9ed99 180deg 225deg,#f5aaa3 225deg 270deg,#91dbea 270deg 315deg,#edc98e 315deg 360deg)}
+    .rotor:after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;background:repeating-conic-gradient(transparent 0deg 44.4deg,rgba(3,21,31,.50) 44.4deg 45deg);box-shadow:inset 0 0 34px #07132259}
+    .wheel-label{position:absolute;display:grid;place-items:center;transform:translate(-50%,-50%);width:clamp(46px,15vw,79px);min-height:34px;max-height:54px;font-size:clamp(8px,2vw,11.5px);line-height:1.11;font-weight:1000;text-align:center;color:#101b28;letter-spacing:-.25px;overflow-wrap:anywhere;text-shadow:0 1px 0 #ffffff76;z-index:1}.wheel-label.long{font-size:clamp(7px,1.8vw,10px)}
+    .wheel-pin{position:absolute;z-index:6;left:50%;top:-19px;transform:translateX(-50%);width:38px;height:47px;filter:drop-shadow(0 5px 3px #0007)}.wheel-pin:before{content:"";position:absolute;top:0;left:0;border-left:19px solid transparent;border-right:19px solid transparent;border-top:46px solid #f9fff8}.wheel-pin:after{content:"";position:absolute;top:3px;left:10px;border-left:9px solid transparent;border-right:9px solid transparent;border-top:28px solid #1a9d95}
+    .wheel-hub{position:absolute;z-index:4;top:50%;left:50%;width:23%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;border:5px solid #f9fdfb;background:radial-gradient(circle at 35% 25%,#1b4150,#06121a 75%);box-shadow:0 5px 18px #031018bd,0 0 0 2px #2fb8af;color:#abfff0;font-size:clamp(10px,2.3vw,14px);font-weight:1000;line-height:1.12;letter-spacing:1.1px}.wheel-hub small{font-size:8px;color:#f8d8a1;letter-spacing:1.5px;margin-top:4px}
+    .status{position:relative;margin:20px 0 13px;color:#e2f3f0;font-size:13px;font-weight:850;min-height:21px}.progress{height:6px;border-radius:100px;max-width:385px;margin:auto;background:#ffffff15;overflow:hidden}.progress-fill{width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#238f88,var(--teal),#f3d5a7);transition:width .15s linear}.spin-button{position:relative;display:block;width:min(100%,385px);margin:20px auto 0;padding:16px 20px;border:0;border-radius:13px;background:linear-gradient(110deg,#69ebd3,#baffee);box-shadow:0 10px 30px #29bc9e36;color:#071d21;font-size:12px;font-weight:1000;letter-spacing:1.1px}.spin-button:disabled{opacity:1}.spin-button:enabled:hover{filter:brightness(1.08)}
+    .info-card{padding:24px}.info-card .mini-overline{font-size:10px;letter-spacing:2px;color:var(--gold);font-weight:950}.info-card h2{font-size:24px;letter-spacing:-.8px;line-height:1.13;margin:12px 0}.info-card .side-sub{color:#a3b6c2;font-size:12px;line-height:1.7;margin:0 0 19px}.step{display:flex;gap:13px;align-items:flex-start;border-top:1px solid var(--line);padding:16px 0}.step-index{background:#113a3c;color:var(--teal);width:30px;height:30px;display:grid;place-items:center;border-radius:10px;flex-shrink:0;font-size:11px;font-weight:950}.step h3{font-size:12px;margin:1px 0 4px}.step p{margin:0;color:#9caebb;font-size:11px;line-height:1.6}.side-highlight{border:1px solid #3ee1cb3b;background:linear-gradient(130deg,#37cdbb14,#fff1cc07);border-radius:13px;padding:13px;margin-top:4px;font-size:11px;line-height:1.6;color:#bedbd8}.side-highlight strong{color:#90ffee}.side-icon{font-size:27px;margin-bottom:8px}
+    .result{position:relative;max-width:440px;margin:26px auto 0;border-radius:19px;border:1px solid #4ee4cb6c;background:linear-gradient(130deg,rgba(24,70,70,.63),#0c2230 70%);box-shadow:0 17px 50px #0006;padding:25px 19px;text-align:center;animation:slideIn .45s ease both}.result-kicker{font-size:10px;font-weight:950;letter-spacing:2.5px;color:var(--gold)}.result h2{font-size:clamp(21px,5vw,28px);margin:10px 0;line-height:1.22;letter-spacing:-.45px}.result-desc{font-size:12px;line-height:1.7;color:#b5c8d0;margin:9px auto;max-width:335px}.result-number{font-size:clamp(38px,11vw,57px);font-weight:1000;letter-spacing:-1.3px;margin:14px 0 7px;color:#e6fff8;line-height:1.07}.result-number small{display:block;font-size:14px;letter-spacing:2px;color:var(--teal);margin-top:5px}.coupon-label{color:#a5b6bf;font-size:10px;font-weight:900;letter-spacing:1.4px;margin:19px 0 9px}.coupon-box{display:flex;align-items:center;gap:9px;justify-content:space-between;text-align:left;border:1px dashed #70e8d6b3;border-radius:13px;background:#07151da6;padding:8px 8px 8px 16px}.coupon-box code{font-family:inherit;color:var(--teal);font-weight:1000;letter-spacing:1px;font-size:15px;overflow-wrap:anywhere}.copy-button{border:0;border-radius:9px;padding:10px 13px;background:#94fae7;color:#062320;font-weight:950;font-size:10px;white-space:nowrap}.claim-button{display:block;text-align:center;margin-top:13px;border-radius:11px;background:#effcf8;color:#0b2127;padding:14px 14px;text-decoration:none;font-size:11px;font-weight:950;letter-spacing:.8px}.claim-button:hover{background:#9dffeb}.terms{color:#9eb0ba;font-size:10px;line-height:1.65;margin:12px 0 0}.today-note{color:#a5c8bf;font-size:11px;line-height:1.6;margin:11px 0 0}
+    .footer{margin-top:29px;display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid var(--line);padding:23px 0 0;color:#8fa3af;font-size:10px;line-height:1.7}.footer a{color:#b7f8ed;text-decoration:none;font-weight:850}.foot-note{max-width:650px;text-align:right}
+    #setupView{max-width:850px;margin:38px auto}.setup-card{padding:26px;border-radius:24px;border:1px solid var(--line);background:#101d2be8;box-shadow:var(--shadow)}.setup-card h2{margin:3px 0 8px;font-size:27px}.setup-card p{color:var(--muted);font-size:12px;line-height:1.7}.setup-grid{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:26px}.setup-label{display:block;font-size:11px;margin:23px 0 9px;font-weight:850;color:#d9efee}.setup-input{width:100%;min-width:0;padding:13px;border-radius:12px;background:#07131f;border:1px solid #ffffff28;color:#effffb;font-size:12px}.action-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}.action-button{border-radius:11px;padding:12px 15px;background:var(--teal);color:#082320;font-weight:900;font-size:11px;border:0}.action-button.secondary{background:#ffffff12;border:1px solid #ffffff23;color:#f4ffff}.action-button:hover{filter:brightness(1.08)}.qr-box{height:187px;width:187px;display:grid;place-items:center;background:#fff;border-radius:16px;padding:11px}.qr-box img{height:100%;width:100%;object-fit:contain;display:none}.qr-placeholder{color:#334250;font-size:11px;text-align:center;font-weight:900;line-height:1.5}.qr-caption{color:#b3c8cb;font-size:10px;text-align:center;margin-top:8px}.status-line{min-height:20px;margin-top:12px!important}.offer-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:17px}.offer-chip{border:1px solid #ffffff19;background:#ffffff06;border-radius:12px;padding:14px 7px;text-align:center}.offer-chip strong{display:block;font-size:12px}.offer-chip small{display:block;color:#a6bdc2;margin-top:5px;font-size:9px;word-break:break-word}.notice{background:#f6c77810;border:1px solid #f1d39c30;padding:12px 15px;border-radius:12px}
+    .toast{position:fixed;bottom:max(18px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(9px);z-index:30;max-width:calc(100% - 40px);padding:12px 19px;border-radius:13px;background:#a9fff0;color:#0b2726;box-shadow:0 11px 30px #0007;font-weight:900;font-size:12px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;text-align:center}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    @keyframes slideIn{from{opacity:0;transform:translateY(15px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @media(max-width:800px){.game-shell{grid-template-columns:minmax(0,1fr);max-width:590px}.info-card{display:grid;grid-template-columns:1fr 1fr;gap:4px 20px}.info-card .side-icon,.info-card .mini-overline,.info-card>h2,.info-card>.side-sub,.side-highlight{grid-column:1/-1}.step{padding:13px 0}.hero{padding-top:33px}.hero h1{letter-spacing:-1.9px}.wheel-container{width:min(79vw,410px)}}
+    @media(max-width:560px){.site-wrap{padding:14px 13px 26px}.topbar{padding-bottom:15px}.brand-mark{width:39px;height:39px}.brand-name{font-size:15px}.brand-sub{font-size:8px;letter-spacing:1.6px}.top-pill{font-size:9px;padding:8px 10px}.hero h1{font-size:clamp(34px,9.5vw,48px);letter-spacing:-1.7px}.overline{font-size:9px;letter-spacing:2px}.game-shell{margin-top:22px;gap:14px}.game-card{padding:17px 10px 20px;border-radius:19px}.wheel-container{margin:26px auto 8px;width:min(79vw,375px)}.wheel-label{width:clamp(44px,16vw,70px)}.wheel-hub{border-width:4px}.info-card{padding:20px 16px;border-radius:19px}.info-card h2{font-size:20px}.info-card .step h3{font-size:11px}.info-card .step p{font-size:10px}.game-head{padding:0 5px}.footer{display:block;text-align:center}.foot-note{text-align:center;margin:5px auto}.setup-grid{grid-template-columns:1fr}.setup-card{padding:18px}.setup-grid .qr-side{margin:auto}.offer-grid{grid-template-columns:repeat(2,1fr)}.step-index{width:28px;height:28px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="site-wrap">
+    <header class="topbar">
+      <a class="brand" href="https://vasukinfc.in/" aria-label="Visit Vasuki NFC official website">
+        <div class="brand-mark" aria-hidden="true">V</div>
+        <div><div class="brand-name">VASUKI <span>NFC</span><sup style="font-size:9px;vertical-align:top">™</sup></div><div class="brand-sub">SMARTER CONNECTIONS</div></div>
+      </a>
+      <div class="top-pill"><span class="pulse-dot" aria-hidden="true"></span> EXCLUSIVE LUCKY REWARDS</div>
+    </header>
+
+    <!-- Any normal URL directly opens customer mode. ?setup=1 is only a QR helper, not a protected admin page. -->
+    <main id="customerView">
+      <div class="hero">
+        <div class="overline"><span class="line-stars">✦</span> A LITTLE SURPRISE FROM VASUKI NFC <span class="line-stars">✦</span></div>
+        <h1>Tap into <span>your luck.</span></h1>
+        <p>One wheel. Eight possible surprises. Sit back, watch it spin and discover your very own reward.</p>
+      </div>
+      <div class="game-shell">
+        <section class="game-card" aria-label="Vasuki NFC lucky wheel">
+          <div class="game-head"><span>✦ LUCKY SPIN</span><strong id="wheelCounter">8 REWARDS</strong></div>
+          <div class="wheel-container" id="wheelContainer">
+            <div class="wheel-halo" aria-hidden="true"></div>
+            <div class="wheel-ring"><div id="wheelRotor" class="rotor" role="img" aria-label="A wheel with eight possible lucky rewards"></div></div>
+            <div class="wheel-pin" aria-hidden="true"></div>
+            <div class="wheel-hub" aria-hidden="true">VASUKI<small>LUCKY</small></div>
+          </div>
+          <div id="wheelStatus" class="status" role="status" aria-live="polite">Getting your lucky wheel ready…</div>
+          <div class="progress" aria-hidden="true"><div id="progressFill" class="progress-fill"></div></div>
+          <button id="spinButton" class="spin-button" type="button" disabled>✦ &nbsp; YOUR WHEEL IS STARTING…</button>
+          <div id="resultCard" class="result" hidden aria-live="polite"></div>
+        </section>
+        <aside class="info-card">
+          <div class="side-icon" aria-hidden="true">✦</div>
+          <div class="mini-overline">YOUR MOMENT TO WIN</div>
+          <h2>A smart surprise.<br>A better deal.</h2>
+          <p class="side-sub">Your chance is chosen automatically when you open this link. No sign-in or app needed.</p>
+          <div class="step"><div class="step-index">01</div><div><h3>Open the link</h3><p>The lucky wheel spins automatically on your screen.</p></div></div>
+          <div class="step"><div class="step-index">02</div><div><h3>Discover your surprise</h3><p>See where the pointer stops and reveal your result.</p></div></div>
+          <div class="step"><div class="step-index">03</div><div><h3>Use your code</h3><p>Copy the coupon, then apply it at checkout if eligible.</p></div></div>
+          <div class="side-highlight"><strong>✦ Your reward is saved for 24 hours.</strong><div>Reopening this link on the same browser keeps your existing reward until the next chance.</div></div>
+        </aside>
+      </div>
+    </main>
+
+    <main id="setupView" hidden>
+      <div class="setup-card">
+        <div class="overline">✦ VASUKI NFC · LINK & QR HELPER</div>
+        <h2>Share your lucky wheel.</h2>
+        <p>Upload this HTML file to your hosting. The normal page link opens the wheel and starts spinning automatically. Use this helper to make a QR or copy the customer link.</p>
+        <div class="setup-grid">
+          <div>
+            <label class="setup-label" for="publicUrl">PUBLIC WEBSITE URL</label>
+            <input class="setup-input" type="url" id="publicUrl" placeholder="https://yourdomain.com/lucky-wheel.html" autocomplete="url">
+            <div class="action-row"><button class="action-button" id="generateQr" type="button">GENERATE QR</button><button class="action-button secondary" id="copyLink" type="button">COPY LINK</button><button class="action-button secondary" id="previewLink" type="button">PREVIEW WHEEL</button></div>
+            <p id="qrStatus" class="status-line" role="status">Upload the file first for a working public QR code.</p>
+            <p class="notice"><strong>Important:</strong> These are example coupon codes. Activate the exact codes and discount rules in your store checkout before sharing publicly.</p>
+          </div>
+          <div class="qr-side"><div class="qr-box"><img id="qrImage" alt="QR code pointing to the public lucky wheel"><div id="qrPlaceholder" class="qr-placeholder">YOUR LUCKY<br>WHEEL QR<br>SHOWS HERE</div></div><p class="qr-caption">One QR • One customer page</p><a href="#" id="saveQr" hidden target="_blank" rel="noopener" style="color:var(--teal);font-size:11px;text-align:center">OPEN QR IMAGE</a></div>
+        </div>
+        <h3 style="font-size:14px;margin:22px 0 0">Configured wheel outcomes</h3>
+        <div id="offerGrid" class="offer-grid" aria-label="Configured offers"></div>
+        <p style="margin-top:17px">To edit, add or remove outcomes, change the <code style="color:var(--teal)">OFFERS</code> array in this file. The wheel automatically adjusts its segments. The setup URL is public, not an admin login.</p>
+      </div>
+    </main>
+
+    <footer class="footer"><div>© <span id="year"></span> <a href="https://vasukinfc.in/">VASUKI NFC™</a> · Tap. Connect. Remember.</div><div class="foot-note">Offers are subject to store eligibility and checkout rules. This page does not activate coupons or process payments.</div></footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+  (() => {
+    'use strict';
+    // EDIT ONLY THIS CONFIGURATION SECTION FOR NEW OFFERS.
+    // The wheel, labels, share helper and random bag are all generated from OFFERS.
+    const CONFIG = {
+      storeUrl: 'https://vasukinfc.in/',
+      offerValidityHours: 24,
+      spinDurationMs: 6200
+    };
+    const OFFERS = [
+      {id:'welcome10',label:'10% OFF',color:'#41dbc5',badge:'✦ WELCOME SURPRISE',title:'You unlocked 10% off!',description:'Your first smart saving is waiting.',value:'10%',unit:'OFF',coupon:'WELCOME10',terms:'Valid only if this code is active and eligible at checkout.'},
+      {id:'weekend15',label:'15% OFF',color:'#f5cf8d',badge:'✦ EXTRA SAVINGS',title:'15% off, just for you!',description:'Enjoy a little more value with your next order.',value:'15%',unit:'OFF',coupon:'WEEKEND15',terms:'Valid only if this code is active and eligible at checkout.'},
+      {id:'flash20',label:'20% OFF',color:'#89baff',badge:'⚡ FLASH SURPRISE',title:'The wheel picked 20% off!',description:'A special chance to save on an eligible purchase.',value:'20%',unit:'OFF',coupon:'FLASH20',terms:'Valid only if this code is active and eligible at checkout.'},
+      {id:'save25',label:'25% OFF',color:'#e8a1dc',badge:'✦ SPECIAL REWARD',title:'Your surprise: 25% off!',description:'A bigger saving from the lucky wheel.',value:'25%',unit:'OFF',coupon:'SAVE25',terms:'Valid only if this code is active and eligible at checkout.'},
+      {id:'mega30',label:'30% OFF',color:'#b8ec99',badge:'★ MEGA REWARD',title:'30% off is your result!',description:'Make your next eligible purchase even better.',value:'30%',unit:'OFF',coupon:'MEGA30',terms:'Valid only if this code is active and eligible at checkout.'},
+      {id:'max40',label:'UP TO 40%',color:'#f5b6a5',badge:'✦ BIG SURPRISE',title:'You unlocked up to 40% off!',description:'Explore eligible selected products for the possible savings.',value:'UP TO 40%',unit:'OFF',coupon:'MAX40',terms:'“Up to” discount applies to selected eligible items only, when configured at checkout.'},
+      {id:'betterluck',label:'BETTER LUCK',color:'#a2e1e9',badge:'✦ MAYBE NEXT TIME',title:'Better luck next time!',description:'This spin did not win a discount. Thanks for giving it a go!',value:'BETTER LUCK',unit:'NEXT TIME',coupon:'',terms:'No coupon is awarded for this outcome.',noWin:true},
+      {id:'freeship',label:'FREE DELIVERY',color:'#f4d18d',badge:'✦ DELIVERY SURPRISE',title:'Free delivery is your result!',description:'Your lucky wheel landed on a delivery treat.',value:'FREE',unit:'DELIVERY',coupon:'FREESHIP',terms:'Only for eligible delivery locations and orders, if enabled at checkout.'}
+    ];
+    // A static HTML page cannot balance awards across DIFFERENT visitors/devices.
+    // For global prize inventory, server-enforced limits and secure redemption, connect a backend.
+    const STORAGE_KEY='vasuki_lucky_wheel_v1';
+    const $=id=>document.getElementById(id);
+    const params=new URLSearchParams(window.location.search);
+    const isSetup=params.get('setup')==='1';
+    const isDemo=params.get('preview')==='1'; // Preview does not consume a saved prize.
+    const duration=CONFIG.spinDurationMs;
+    let toastTimer,resizeTimer;
+    function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+    function notify(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);}
+    async function copyText(text){try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);return true;}}catch(_e){}const f=document.createElement('textarea');f.value=text;f.style.position='fixed';f.style.left='-9999px';document.body.appendChild(f);f.focus();f.select();let copied=false;try{copied=document.execCommand('copy');}catch(_e){}f.remove();return copied;}
+    // Cryptographic randomness when available; rejection sampling prevents modulo bias.
+    function randomInt(max){if(max<=1)return 0;if(window.crypto&&crypto.getRandomValues){const bucket=new Uint32Array(1),cutoff=Math.floor(4294967296/max)*max;do{crypto.getRandomValues(bucket);}while(bucket[0]>=cutoff);return bucket[0]%max;}return Math.floor(Math.random()*max);}
+    function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=randomInt(i+1);[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+    function getStored(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');}catch(_e){return null;}}
+    function saveStored(state){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(_e){}}
+    function chooseOffer(){
+      if(isDemo)return {offer:OFFERS[randomInt(OFFERS.length)],isSaved:false,expiresAt:null};
+      const now=Date.now(),ms=CONFIG.offerValidityHours*60*60*1000;
+      const stored=getStored()||{};
+      if(stored.reward&&Number.isFinite(stored.reward.timestamp)&&now-stored.reward.timestamp>=0&&now-stored.reward.timestamp<ms){
+        const existing=OFFERS.find(o=>o.id===stored.reward.id);
+        if(existing)return {offer:existing,isSaved:true,expiresAt:stored.reward.timestamp+ms};
+      }
+      const ids=OFFERS.map(o=>o.id),available=new Set(ids);
+      let queue=Array.isArray(stored.queue)?stored.queue.filter(id=>available.has(id)):[];
+      // Drop duplicates from old or corrupt queues.
+      queue=queue.filter((id,i)=>queue.indexOf(id)===i);
+      // If the offer catalogue changes, begin a complete new cycle.
+      if(stored.catalogue!==ids.join('|'))queue=[];
+      if(!queue.length){
+        queue=shuffle([...ids]);
+        if(queue.length>1 && queue[queue.length-1]===stored.lastId){
+          const swapIndex=randomInt(queue.length-1);
+          [queue[swapIndex],queue[queue.length-1]]=[queue[queue.length-1],queue[swapIndex]];
+        }
+      }
+      const chosenId=queue.pop(),chosen=OFFERS.find(o=>o.id===chosenId)||OFFERS[0];
+      const record={catalogue:ids.join('|'),queue,lastId:chosen.id,reward:{id:chosen.id,timestamp:now}};
+      saveStored(record);
+      return {offer:chosen,isSaved:false,expiresAt:now+ms};
+    }
+    function buildWheel(){
+      const rotor=$('wheelRotor');if(!rotor)return;
+      const count=OFFERS.length,step=360/count;
+      rotor.querySelectorAll('.wheel-label').forEach(n=>n.remove());
+      const colors=OFFERS.map((o,i)=>`${o.color} ${(i*step).toFixed(4)}deg ${((i+1)*step).toFixed(4)}deg`);
+      rotor.style.background=`conic-gradient(${colors.join(',')})`;
+      const d=rotor.clientWidth||360,rad=d*.33;
+      OFFERS.forEach((o,i)=>{
+        const a=(-90+(i+.5)*step)*Math.PI/180;
+        const node=document.createElement('div');node.className='wheel-label'+(o.label.length>9?' long':'');node.textContent=o.label;
+        node.style.left=`calc(50% + ${Math.cos(a)*rad}px)`;
+        node.style.top=`calc(50% + ${Math.sin(a)*rad}px)`;
+        if(count>8)node.style.fontSize='9px';
+        rotor.appendChild(node);
+      });
+      rotor.setAttribute('aria-label',`Lucky wheel with ${count} possible outcomes`);
+      $('wheelCounter').textContent=`${count} POSSIBLE RESULTS`;
+    }
+    function showResult(data){
+      const o=data.offer,card=$('resultCard');card.replaceChildren();
+      const notice=data.isSaved?'<p class="today-note">This is your saved reward for today. A new chance opens after the 24-hour period.</p>':(isDemo?'<p class="today-note">Preview mode: this result is not saved.</p>':'');
+      const coupon=o.coupon?
+        `<div class="coupon-label">YOUR COUPON CODE</div><div class="coupon-box"><code>${escapeHTML(o.coupon)}</code><button id="copyCoupon" class="copy-button" type="button">COPY CODE</button></div>`:
+        `<div class="coupon-label">NO COUPON FOR THIS SPIN</div>`;
+      card.innerHTML=`<div class="result-kicker">${escapeHTML(o.badge)}</div><h2>${escapeHTML(o.title)}</h2><p class="result-desc">${escapeHTML(o.description)}</p><div class="result-number">${escapeHTML(o.value)}<small>${escapeHTML(o.unit)}</small></div>${coupon}<a class="claim-button" href="${escapeHTML(CONFIG.storeUrl)}" target="_blank" rel="noopener">${o.noWin?'VISIT VASUKI NFC':'SHOP WITH VASUKI NFC'} &nbsp;↗</a><p class="terms">${escapeHTML(o.terms)}</p>${notice}`;
+      card.hidden=false;
+      const copy=$('copyCoupon');if(copy)copy.addEventListener('click',async()=>{const ok=await copyText(o.coupon);notify(ok?'Coupon copied!':'Copy unavailable. Please select the coupon manually.');if(ok)copy.textContent='COPIED ✓';});
+      if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),180);}
+    }
+    function runWheel(){
+      if(OFFERS.length<2){$('wheelStatus').textContent='Please configure at least two offers.';return;}
+      buildWheel();
+      const picked=chooseOffer(),idx=OFFERS.findIndex(o=>o.id===picked.offer.id),step=360/OFFERS.length;
+      const status=$('wheelStatus'),progress=$('progressFill'),button=$('spinButton'),rotor=$('wheelRotor');
+      const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const spinTime=reduced?0:duration;
+      button.textContent='✦  SPINNING YOUR SURPRISE…';
+      status.textContent=picked.isSaved?'Bringing back your saved reward…':'Shuffling the lucky rewards…';
+      let startedAt=null,frameId=null;
+      function tick(t){if(startedAt===null)startedAt=t;progress.style.width=`${Math.min(100,((t-startedAt)/Math.max(1,spinTime))*100)}%`;if(t-startedAt<spinTime)frameId=requestAnimationFrame(tick);}
+      if(!reduced)frameId=requestAnimationFrame(tick);
+      // conic-gradient starts at 12 o'clock; the pointer is at 12 o'clock.
+      // To land at slice center, rotate that slice center back to zero degrees.
+      const targetCenter=(idx+.5)*step;
+      const turns=6+randomInt(3);
+      const jitter=(randomInt(1000)/1000-.5)*step*.25;
+      const rotation=turns*360+(360-targetCenter)+jitter;
+      if(reduced){rotor.style.transition='none';rotor.style.transform=`rotate(${rotation}deg)`;}else{
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{rotor.style.transform=`rotate(${rotation}deg)`;}));
+      }
+      setTimeout(()=>{
+        if(frameId!==null)cancelAnimationFrame(frameId);
+        progress.style.width='100%';
+        status.textContent=picked.isSaved?'✦ Your saved reward is here!':'✦ The wheel has landed. Your result is ready!';
+        button.textContent='✦  YOUR REWARD IS REVEALED';
+        showResult(picked);
+      },spinTime+120);
+    }
+    function customerUrl(raw){
+      const u=new URL(raw);if(!['http:','https:'].includes(u.protocol))throw new Error('Use a public https:// link.');
+      u.hash='';u.searchParams.delete('setup');u.searchParams.delete('preview');u.searchParams.delete('play');return u.href;
+    }
+    function setup(){
+      $('customerView').hidden=true;$('setupView').hidden=false;
+      const grid=$('offerGrid');grid.replaceChildren();
+      OFFERS.forEach(o=>{const item=document.createElement('div');item.className='offer-chip';item.innerHTML=`<strong>${escapeHTML(o.label)}</strong><small>${escapeHTML(o.coupon||'NO PRIZE')}</small>`;grid.appendChild(item);});
+      let base='';if(['http:','https:'].includes(location.protocol)){base=customerUrl(location.href);$('publicUrl').value=base;}
+      const input=$('publicUrl'),message=$('qrStatus'),img=$('qrImage'),save=$('saveQr'),placeholder=$('qrPlaceholder');
+      const get=()=>customerUrl(input.value.trim());
+      const generate=()=>{let url;try{url=get();}catch(_e){message.textContent='Please enter a valid public website link.';return;}
+        message.textContent='QR generated. Scan it with a second phone before printing.';
+        placeholder.textContent='LOADING QR…';placeholder.style.display='block';img.style.display='none';save.hidden=true;
+        img.onload=()=>{img.style.display='block';placeholder.style.display='none';save.href=img.src;save.hidden=false;};
+        img.onerror=()=>{placeholder.textContent='QR NOT AVAILABLE';message.textContent='QR generator could not load. Check the internet and retry.';};
+        img.src='https://api.qrserver.com/v1/create-qr-code/?size=640x640&margin=12&data='+encodeURIComponent(url);
+      };
+      $('generateQr').addEventListener('click',generate);
+      $('copyLink').addEventListener('click',async()=>{try{notify(await copyText(get())?'Customer link copied!':'Copy link manually from the URL field.');}catch(_e){notify('Enter a valid public URL first.');}});
+      $('previewLink').addEventListener('click',()=>{try{const u=new URL(get());u.searchParams.set('preview','1');location.href=u.href;}catch(_e){notify('Enter the public URL or host the file first.');}});
+      if(base)generate();
+    }
+    $('year').textContent=new Date().getFullYear();
+    if(isSetup)setup();else{
+      $('customerView').hidden=false;
+      // Small delay makes the wheel visible before its automatic spin begins.
+      if(document.readyState==='complete')setTimeout(runWheel,480);
+      else window.addEventListener('load',()=>setTimeout(runWheel,480),{once:true});
+      addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(buildWheel,160);});
+    }
+  })();
+  </script>
+</body>
+</html>
