@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Google Review Reel</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#1a3fa8;--sky:#1e9bff;--yel:#ffc928;--ink:#10142b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;margin:0;background:#0b0d17;color:#fff;font-family:'Poppins',system-ui,sans-serif}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;overflow:hidden}
+#wrap{width:calc(540px*var(--s,1));height:calc(960px*var(--s,1));position:relative}
+#stage{width:540px;height:960px;position:absolute;left:0;top:0;transform:scale(var(--s,1));transform-origin:0 0;overflow:hidden;background:var(--blue);border-radius:18px}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:50px 36px;text-align:center;opacity:0;transition:opacity .25s}
+.scene.on{opacity:1}
+.scene.stack .it{position:absolute}
+.bg-blue{background:linear-gradient(160deg,#1a3fa8,#0f2a7a);color:#fff}
+.bg-white{background:#f6f8ff;color:var(--ink)}
+.bg-yel{background:var(--yel);color:var(--ink)}
+.bg-sky{background:linear-gradient(160deg,#1e9bff,#1a3fa8);color:#fff}
+.it{opacity:0;font-family:'Anton',Impact,sans-serif;text-transform:uppercase;line-height:1.02;letter-spacing:.5px}
+.it.in{opacity:1}
+.s1{font-size:62px}.s2{font-size:84px}.s3{font-size:112px}.s0{font-size:40px}
+.it .w{display:inline-block;opacity:0;margin:0 .13em}
+.it.in .w{animation:pop .55s cubic-bezier(.2,1.5,.4,1) forwards;animation-delay:calc(var(--i)*.09s)}
+.fx-slide.in .w{animation-name:slide}.fx-drop.in .w{animation-name:drop}.fx-zoom.in .w{animation-name:zoom}
+.it.out .w{animation:out .25s ease-in forwards;animation-delay:0s}
+.hl{color:var(--yel)}.bg-white .hl,.bg-yel .hl{color:var(--blue)}
+.bg-yel .hl{color:#fff;-webkit-text-stroke:0}
+@keyframes pop{from{opacity:0;transform:scale(.3) rotate(-6deg)}to{opacity:1;transform:none}}
+@keyframes slide{from{opacity:0;transform:translateX(-90px)}to{opacity:1;transform:none}}
+@keyframes drop{from{opacity:0;transform:translateY(-140px) rotate(8deg)}to{opacity:1;transform:none}}
+@keyframes zoom{from{opacity:0;transform:scale(3.2)}to{opacity:1;transform:none}}
+@keyframes out{to{opacity:0;transform:translateX(320px) scale(.8)}}
+.gl{width:150px;height:150px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font:400 118px/1 'Anton',Impact,sans-serif;box-shadow:0 10px 30px #0004;margin-top:10px}
+.gl span{background:conic-gradient(from -45deg,#4285f4 0 25%,#34a853 25% 50%,#fbbc05 50% 75%,#ea4335 75%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stars{color:var(--yel);font-size:54px;letter-spacing:6px;text-transform:none}
+.bar{position:absolute;left:0;bottom:0;height:6px;background:var(--yel);width:0;z-index:5}
+#ctl{display:flex;gap:10px;align-items:center}
+button{background:var(--yel);color:var(--ink);border:0;border-radius:999px;padding:10px 20px;font:600 14px 'Poppins',system-ui,sans-serif;cursor:pointer}
+#clock{font-size:13px;opacity:.7;min-width:70px}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="stage"><div class="bar" id="bar"></div></div></div>
+<div id="ctl"><button id="pp">▶ Play</button><button id="rs">↺ Restart</button><span id="clock">0:00 / 0:43</span></div>
+<script>
+// *word* = yellow highlight. at = seconds into scene, dur = hide after (stack scenes).
+const SC=[
+{s:0,e:3.4,bg:'blue',it:[
+ {t:'Ha, your customers *love* your business…',z:'s2',fx:'zoom',at:0}]},
+{s:3.4,e:5.8,bg:'white',it:[
+ {t:'But does',z:'s2',fx:'slide',at:0},
+ {t:'*Google*',z:'s3',fx:'zoom',at:.35},
+ {t:'know that?',z:'s2',fx:'slide',at:.9},
+ {g:1,at:1.2}]},
+{s:5.8,e:10,bg:'yel',stack:1,it:[
+ {t:'Restaurants',z:'s3',fx:'zoom',at:0,dur:.65},{t:'Salons',z:'s3',fx:'drop',at:.7,dur:.65},
+ {t:'Gyms',z:'s3',fx:'zoom',at:1.4,dur:.65},{t:'Cafés',z:'s3',fx:'drop',at:2.1,dur:.65},
+ {t:'Hotels',z:'s3',fx:'zoom',at:2.8,dur:.65},{t:'Stores',z:'s3',fx:'drop',at:3.5,dur:.7}]},
+{s:10,e:14.2,bg:'blue',it:[
+ {t:'Every business has',z:'s1',fx:'slide',at:0},
+ {t:'happy customers',z:'s2',fx:'zoom',at:.7},
+ {t:'…most just *walk away.*',z:'s2',fx:'drop',at:2.2}]},
+{s:14.2,e:18,bg:'white',it:[
+ {t:'What if sharing their experience',z:'s1',fx:'slide',at:0},
+ {t:'was as easy as a',z:'s1',fx:'slide',at:1.1},
+ {t:'*TAP?*',z:'s3',fx:'zoom',at:1.9}]},
+{s:18,e:23,bg:'sky',it:[
+ {t:'One tap.',z:'s3',fx:'zoom',at:0},
+ {t:'Or a QR scan.',z:'s2',fx:'slide',at:.8},
+ {t:'Straight to your *Google review page*',z:'s1',fx:'drop',at:1.8},
+ {t:'No searching.',z:'s2',fx:'slide',at:3},
+ {t:'No complicated steps.',z:'s2',fx:'slide',at:3.7}]},
+{s:23,e:31,bg:'blue',it:[
+ {t:'★★★★★',z:'s2',cls:'stars',fx:'zoom',at:0},
+ {t:'More *genuine* feedback',z:'s2',fx:'slide',at:.4},
+ {t:'Stronger *credibility*',z:'s2',fx:'slide',at:2.6},
+ {t:'Better *first impressions*',z:'s2',fx:'slide',at:4.8}]},
+{s:31,e:35.4,bg:'yel',it:[
+ {t:'Before people choose a business…',z:'s1',fx:'slide',at:0},
+ {t:'they check what *others* say.',z:'s2',fx:'zoom',at:1.8}]},
+{s:35.4,e:41,bg:'white',it:[
+ {t:'Growing your reputation isn’t about',z:'s1',fx:'slide',at:0},
+ {t:'doing *more.*',z:'s3',fx:'zoom',at:1.2},
+ {t:'It’s about making the right things',z:'s1',fx:'slide',at:3},
+ {t:'*EASIER.*',z:'s3',fx:'zoom',at:4.1}]},
+{s:41,e:44,bg:'blue',it:[
+ {t:'★★★★★',z:'s2',cls:'stars',fx:'drop',at:0},
+ {t:'Tap. Review. *Grow.*',z:'s2',fx:'zoom',at:.3}]}
+];
+const TOTAL=44, st=document.getElementById('stage');
+const fmt=n=>Math.floor(n/60)+':'+String(Math.floor(n%60)).padStart(2,'0');
+document.getElementById('clock').textContent='0:00 / '+fmt(TOTAL);
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const els=SC.map(sc=>{
+  const d=document.createElement('div');d.className='scene bg-'+sc.bg+(sc.stack?' stack':'');
+  const its=sc.it.map(o=>{
+    const e=document.createElement('div');
+    if(o.g){e.className='it fx-zoom';e.innerHTML='<div class="gl"><span>G</span></div>';e.style.opacity=0;e._g=1;}
+    else{
+      e.className='it '+o.z+' fx-'+o.fx+(o.cls?' '+o.cls:'');
+      let i=0;
+      e.innerHTML=esc(o.t).split(/(\*[^*]+\*)/).map(p=>{
+        const hl=p[0]==='*';const txt=hl?p.slice(1,-1):p;
+        return txt.split(' ').filter(Boolean).map(w=>`<span class="w${hl?' hl':''}" style="--i:${i++}">${w}</span>`).join(' ');
+      }).join(' ');
+    }
+    d.appendChild(e);return {e,o,done:0,out:0};
+  });
+  st.appendChild(d);return {d,its,on:0};
+});
+let t0=0,off=0,run=false,raf;
+function reset(){els.forEach(s=>{s.d.classList.remove('on');s.on=0;s.its.forEach(i=>{i.e.classList.remove('in','out');i.e.style.opacity=i.e._g?0:'';i.done=0;i.out=0;});});}
+function tick(){
+  const t=off+(performance.now()-t0)/1000;
+  SC.forEach((sc,k)=>{
+    const s=els[k],local=t-sc.s;
+    const live=t>=sc.s&&t<sc.e;
+    if(live&&!s.on){s.on=1;s.d.classList.add('on');}
+    if(!live&&s.on&&t>=sc.e){s.on=0;s.d.classList.remove('on');}
+    if(live)s.its.forEach(i=>{
+      if(!i.done&&local>=i.o.at){i.done=1;i.e.classList.add('in');if(i.e._g)i.e.style.opacity=1;}
+      if(i.o.dur&&i.done&&!i.out&&local>=i.o.at+i.o.dur){i.out=1;i.e.classList.add('out');}
+    });
+  });
+  document.getElementById('bar').style.width=Math.min(100,t/TOTAL*100)+'%';
+  document.getElementById('clock').textContent=fmt(Math.min(t,TOTAL))+' / '+fmt(TOTAL);
+  if(t>=TOTAL){run=false;pp.textContent='▶ Replay';off=0;return;}
+  raf=requestAnimationFrame(tick);
+}
+const pp=document.getElementById('pp');
+function play(){if(off===0)reset();t0=performance.now();run=true;pp.textContent='❚❚ Pause';tick();}
+function pause(){off+=(performance.now()-t0)/1000;run=false;cancelAnimationFrame(raf);pp.textContent='▶ Resume';}
+pp.onclick=()=>run?pause():play();
+document.getElementById('rs').onclick=()=>{cancelAnimationFrame(raf);off=0;reset();play();};
+function fit(){const s=Math.min(1,(innerHeight-90)/960,innerWidth/540);document.documentElement.style.setProperty('--s',s);}
+addEventListener('resize',fit);fit();
+</script>
+</body>
+</html>
